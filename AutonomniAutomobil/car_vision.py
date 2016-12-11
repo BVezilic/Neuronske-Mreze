@@ -1,0 +1,1 @@
+print  "Ja sam automobil"
