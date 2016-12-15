@@ -10,7 +10,7 @@ import urllib2
 
 
 class Camera(object):
-    def __init__(self, host='192.168.0.103:8080'):
+    def __init__(self, host='192.168.1.7:8080'):
         self.host = host
 
     def stream(self):

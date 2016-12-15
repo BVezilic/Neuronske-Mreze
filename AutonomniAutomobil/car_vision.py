@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 
+print cv2.__version__
 cap = cv2.VideoCapture('http://192.168.1.7:8080/video?x.mjpeg')
 if not cap.isOpened():
     exit('Camera not found')
