@@ -3,6 +3,8 @@
 
 import serial
 from msvcrt import getch
+from Tkinter import *
+
 
 class CarController(object):
 
@@ -11,38 +13,69 @@ class CarController(object):
         self.ser = ser
 
     def forward(self):
-        self.ser.write('H')    #Forward High
+        self.ser.write('0')    #Forward High
 
     def forward_stop(self):
-        self.ser.write("FL")    #Forward Low
+        self.ser.write("1")    #Forward Low
 
     def backward(self):
-        self.ser.write('H')    #Backward High
+        self.ser.write('2')    #Backward High
 
     def backward_stop(self):
-        self.ser.write('L')    #Backward Low
+        self.ser.write('3')    #Backward Low
 
     def left(self):
-        self.ser.write("LH")    #Left High
+        self.ser.write("4")    #Left High
 
     def left_stop(self):
-        self.ser.write("LL")    #Left Low
+        self.ser.write("5")    #Left Low
 
     def right(self):
-        self.ser.write("RH")    #Right High
+        self.ser.write("6")    #Right High
 
-    def right(self):
-        self.ser.write("RL")    #Right Low
+    def right_stop(self):
+        self.ser.write("7")    #Right Low
 
 
-
-#test
 
 car = CarController()
-while True:
-    key = ord(getch())
-    print (key)
-    if key == 80:   #down
-        car.backward()
-    else:
+
+
+def keyup(e):
+    if e.char == 'w' or e.char == 'W':
+        print 'stop up'
+        car.forward_stop()
+    if e.char == 'a' or e.char == 'A':
+        print 'stop left'
+        car.left_stop()
+    if e.char == 'd' or e.char == 'D':
+        print 'stop right'
+        car.right_stop()
+    if e.char == 's' or e.char == 'S':
+        print 'stop down'
         car.backward_stop()
+
+
+def keydown(e):
+    if e.char == 'w' or e.char == 'W':
+        print 'up'
+        car.forward()
+    if e.char == 'a' or e.char == 'A':
+        print 'left'
+        car.left()
+    if e.char == 'd' or e.char == 'D':
+        print 'right'
+        car.right()
+    if e.char == 's' or e.char == 'S':
+        print 'down'
+        car.backward()
+
+root = Tk()
+frame = Frame(root, width=0, height=0)
+frame.bind("<KeyPress>", keydown, car)
+frame.bind("<KeyRelease>", keyup, car)
+frame.pack()
+frame.focus_set()
+root.mainloop()
+
+
