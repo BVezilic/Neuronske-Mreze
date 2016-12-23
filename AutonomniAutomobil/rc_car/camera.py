@@ -7,10 +7,10 @@
 import numpy as np
 import cv2
 import urllib2
-
+import filter as fl
 
 class Camera(object):
-    def __init__(self, host='192.168.1.7:8080'):
+    def __init__(self, host='192.168.0.100:8080'):
         self.host = host
 
     def stream(self):
@@ -24,9 +24,10 @@ class Camera(object):
             if a != -1 and b != -1:
                 jpg = bytes[a:b + 2]
                 bytes = bytes[b + 2:]
-                im_gray = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.CV_LOAD_IMAGE_GRAYSCALE)
-                (thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-                cv2.imshow(hoststr, im_bw)
+                img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
+                img = fl.detect_lames(img)
+                #1(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+                cv2.imshow(hoststr, img)
                 if cv2.waitKey(1) == 27:
                     exit(0)
 
