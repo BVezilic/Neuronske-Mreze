@@ -10,7 +10,7 @@ import urllib2
 import filter as fl
 
 class Camera(object):
-    def __init__(self, host='192.168.0.100:8080'):
+    def __init__(self, host='192.168.1.5:8080'):
         self.host = host
 
     def stream(self):
@@ -25,7 +25,7 @@ class Camera(object):
                 jpg = bytes[a:b + 2]
                 bytes = bytes[b + 2:]
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
-                img = fl.detect_lames(img)
+                img, left_ditance, left_line, right_distance, right_line = fl.detect_lanes(img)
                 #1(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
                 cv2.imshow(hoststr, img)
                 if cv2.waitKey(1) == 27:
