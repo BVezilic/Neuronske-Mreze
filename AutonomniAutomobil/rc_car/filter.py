@@ -116,8 +116,8 @@ def detect_lanes(img):
     #check if there are lines on image
     if lane is None:
         warn('Nema linija')
-        return img
-
+        return img, False, False, False, False
+    print len(lane)
     #iterate through every line in image to find which one are valid
     for i in range(len(lane)):
         rho = lane[i][0][0]

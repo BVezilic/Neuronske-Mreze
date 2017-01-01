@@ -10,7 +10,7 @@ import urllib2
 import filter as fl
 
 class Camera(object):
-    def __init__(self, host='192.168.1.5:8080'):
+    def __init__(self, host='192.168.0.12:8080'):
         self.host = host
 
     def stream(self):
