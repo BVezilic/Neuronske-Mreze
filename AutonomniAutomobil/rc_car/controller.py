@@ -1,8 +1,12 @@
 #Author: Nina Marjanovic
 #Description: Controls RC car using keyboard
 
+
+#1. Connect arduino (COM5 port)
+#2. Run this script
+#3. Use WASD to move car
+
 import serial
-from msvcrt import getch
 from Tkinter import *
 
 
