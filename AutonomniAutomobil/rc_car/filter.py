@@ -31,7 +31,7 @@ def edges(gray):
 
 def lines(img_edges):
     """Calls opencv function for transforming binary image in to list of lines found in image"""
-    return cv2.HoughLines(img_edges, 1, np.pi/180, 50)
+    return cv2.HoughLines(img_edges, 1, np.pi/180, 30)
 
 
 def line(p1, p2):
@@ -106,8 +106,8 @@ def detect_lanes(img):
     lane = lines(edges(img_to_gray(img)))
 
     #border lines for validation
-    left_border = [(30, 35), (60, 35)]
-    right_border = [(120, 35), (150, 35)]
+    left_border = [(10, 60), (50, 60)]
+    right_border = [(124, 60), (164, 60)]
 
     #draw border lines on image
     cv2.line(img, left_border[0], left_border[1], (255, 0, 255), 1)
@@ -117,7 +117,7 @@ def detect_lanes(img):
     if lane is None:
         warn('Nema linija')
         return img, False, False, False, False
-    print len(lane)
+
     #iterate through every line in image to find which one are valid
     for i in range(len(lane)):
         rho = lane[i][0][0]
@@ -169,7 +169,6 @@ def test():
     show_img(img_lane)
 
 #test()
-
 
 
 

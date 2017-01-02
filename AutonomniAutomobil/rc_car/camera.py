@@ -12,6 +12,7 @@ from simulator.simulator import Simulator
 from multiprocessing import Pool
 
 
+
 class Camera(object):
     def __init__(self, host='192.168.1.8:8080'):
         self.host = host
@@ -30,11 +31,9 @@ class Camera(object):
                 bytes = bytes[b + 2:]
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
                 img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
-                print "LD: ", left_distance, "RD: ", right_distance, "LL: ", left_line, "RL: ", right_line
                 cv2.imshow(hoststr, img)
-                print "setting params"
-                self.simulator.set_params(left_line, right_line, left_distance, right_distance)
-                print "params set"
+                print "LD: ", left_distance
+                print "RD: ", right_distance
                 #1(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
                 if cv2.waitKey(1) == 27:
                     exit(0)
@@ -52,11 +51,14 @@ def simulation():
 
 
 def main():
+    run_camera()
+    """
     pool = Pool(processes=2)
     pool.apply_async(run_camera)
     pool.apply_async(simulation)
     pool.close()
     pool.join()
+    """
 
 if __name__ == '__main__':
     main()

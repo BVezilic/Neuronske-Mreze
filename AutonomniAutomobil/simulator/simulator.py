@@ -4,35 +4,61 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+LL = [(-1, -1), (-1, -1)]
 
-class Simulator:
+
+class Simulator(object):
 
     def __init__(self):
-        self.left_lane = [(0, 0), (0,0)]
-        self.right_lane = [(0, 0), (0,0)]
-        self.left_distance = 0
-        self.right_distance = 0
+        self._left_lane = [(0, 0), (0, 0)]
+        self._right_lane = [(0, 0), (0, 0)]
+        self._left_distance = 0
+        self._right_distance = 0
 
-    def set_params(self, left_lane, right_lane, left_distance, right_distance):
-        self.left_lane = left_lane
-        self.right_lane = right_lane
-        self.left_distance = left_distance
-        self.right_distance = right_distance
-        print self.left_lane
+    @property
+    def left_lane(self):
+        return self._left_lane
+
+    @left_lane.setter
+    def set_left_lane(self, value):
+        self._left_lane = value
+
+    @property
+    def right_lane(self):
+        return self._right_lane
+
+    @right_lane.setter
+    def set_right_lane(self, value):
+        self._right_lane = value
+
+    @property
+    def left_distance(self):
+        return self._left_distance
+
+    @left_distance.setter
+    def set_left_distance(self, value):
+        self._left_distance = value
+
+    @property
+    def right_distance(self):
+        return self._right_distance
+
+    @right_distance.setter
+    def set_right_distance(self, value):
+        self._right_distance = value
 
     def draw_lines(self):
         glBegin(GL_LINES)
-        #if self.left_lane is not False:
-         #   print self.left_lane[0]
         #line1
-        '''
-        glVertex2d(line1[0], line1[1])  #vertex1: x, y
-        glVertex2d(line1[2], line1[3])  #vertex2: x, y
+        if self.left_lane is not False:
+            glVertex2d(self.left_lane[0][0], self.left_lane[0][1])  #vertex1: x, y
+            glVertex2d(self.left_lane[1][0], self.left_lane[1][1])  #vertex2: x, y
         #line2
-        glVertex2d(line2[0], line2[1])  # vertex1: x, y
-        glVertex2d(line2[2], line2[3])  # vertex2: x, y
+        if self.right_lane is not False:
+            glVertex2d(self.right_lane[0][0], self.right_lane[0][1])  #vertex1: x, y
+            glVertex2d(self.right_lane[1][0], self.right_lane[1][1])  #vertex2: x, y
         glEnd()
-        '''
+
 
     @staticmethod
     def draw_car():
@@ -40,45 +66,36 @@ class Simulator:
 
     def simulate(self):
         pygame.init()
-        display = (600, 600)
+        width = 600
+        height = 600
+        display = (width, height)
         pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
 
-        gluPerspective(45, (display[0]/display[1]), 0.1, 50.0)
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, width, height, 0, -1, 1)
 
-        glTranslatef(0.0, 0.0, -5)
-
-        translate = 0
-        rotate = 0
         while True:
-
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
             glMatrixMode(GL_MODELVIEW)
             glLoadIdentity()
+
             glPushMatrix()
             self.draw_lines()
             glPopMatrix()
-            keys = pygame.key.get_pressed()
-            if keys[K_w]:
-                translate += 0.01
-            if keys[K_a]:
-                rotate += 1
-            if keys[K_s]:
-                translate -= 0.01
-            if keys[K_d]:
-                rotate -= 1
+
+            glPushMatrix()
+            self.draw_car()
+            glPopMatrix()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
 
-            glPushMatrix()
-            glTranslated(0, translate, 0)
-            glRotated(rotate, 0, 0, 1)
-
-            self.draw_car()
-            glPopMatrix()
 
             pygame.display.flip()
             pygame.time.wait(10)
+
 
