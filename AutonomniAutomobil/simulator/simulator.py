@@ -1,10 +1,12 @@
+#Author: Nina Marjanovic
+#Description: Simulates road and vehicle in real time
+
+#TODO get road data
+
+
 import pygame
 from pygame.locals import *
-
 from OpenGL.GL import *
-from OpenGL.GLU import *
-
-LL = [(-1, -1), (-1, -1)]
 
 
 class Simulator(object):
