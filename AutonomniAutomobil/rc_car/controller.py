@@ -43,43 +43,49 @@ class CarController(object):
 
 
 car = CarController()
+command = [0, 0, 0, 0]
 
 
 def keyup(e):
     if e.char == 'w' or e.char == 'W':
-        print 'stop up'
+        command[0] = 0
         car.forward_stop()
     if e.char == 'a' or e.char == 'A':
-        print 'stop left'
+        command[1] = 0
         car.left_stop()
     if e.char == 'd' or e.char == 'D':
-        print 'stop right'
+        command[2] = 0
         car.right_stop()
     if e.char == 's' or e.char == 'S':
-        print 'stop down'
+        command[3] = 0
         car.backward_stop()
-
+    print command
 
 def keydown(e):
     if e.char == 'w' or e.char == 'W':
-        print 'up'
+        command[0] = 1
         car.forward()
     if e.char == 'a' or e.char == 'A':
-        print 'left'
+        command[1] = 1
         car.left()
     if e.char == 'd' or e.char == 'D':
-        print 'right'
+        command[2] = 1
         car.right()
     if e.char == 's' or e.char == 'S':
-        print 'down'
+        command[3] = 1
         car.backward()
+    print command
 
-root = Tk()
-frame = Frame(root, width=0, height=0)
-frame.bind("<KeyPress>", keydown, car)
-frame.bind("<KeyRelease>", keyup, car)
-frame.pack()
-frame.focus_set()
-root.mainloop()
+
+def control_car():
+    root = Tk()
+    frame = Frame(root, width=0, height=0)
+    frame.bind("<KeyPress>", keydown, car)
+    frame.bind("<KeyRelease>", keyup, car)
+    frame.pack()
+    frame.focus_set()
+    root.mainloop()
+
+control_car()
 
 

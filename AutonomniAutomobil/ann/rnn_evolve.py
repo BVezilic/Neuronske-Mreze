@@ -4,22 +4,44 @@
 #Output: left/right
 
 import pickle
-from neat import population, parallel, visualize
+
+from neat import population, parallel, visualize, nn
+
+from rc_car import car_model
 
 # TODO evaluate genome
 
+num_steps = 100000
 
-def evaluate_genome(genome):
-    pass
+def evaluate_genomes(genomes):
+    for genome in genomes:
+        net = nn.create_feed_forward_phenotype(genome)
+
+        fitnesses = []
+
+        car = car_model.CarModel()
+
+        fitness = 0.0
+        for step in range(num_steps):
+            #get inputs
+            inputs = car.get_distances()
+            #get outputs
+            outputs = net.serial_activate(inputs)
+
+
+
+            print outputs
+
+
+
 
 
 def main():
     # Load the config file
     pop = population.Population('rnn_config')
     # Create parallel evaluator, 4 threads
-    pe = parallel.ParallelEvaluator(4, evaluate_genome)
-    # Evaluate 1000 genoms
-    pop.run(pe.evaluate(1000))
+    # Evaluate genomes
+    pop.run(evaluate_genomes, 1000)
 
     # Save the winner.
     print('Number of evaluations: {0:d}'.format(pop.total_evaluations))
@@ -39,6 +61,5 @@ def main():
     visualize.draw_net(winner, view=True, filename="nn_winner-enabled-pruned.gv", show_disabled=False,
                        prune_unused=True)
 
+main()
 
-if __name__ == "main":
-    main()

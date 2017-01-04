@@ -7,7 +7,7 @@
 import numpy as np
 import cv2
 import urllib2
-import filter as fl
+import lane_detector as fl
 from simulator.simulator import Simulator
 from multiprocessing import Pool
 

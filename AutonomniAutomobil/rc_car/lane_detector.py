@@ -134,7 +134,7 @@ def detect_lanes(img):
         #check with left border
         left_intersection = intersection(line([x1, y1], [x2, y2]), line(left_border[0], left_border[1]))
         if left_intersection:
-            if is_valid_position(left_intersection, left_border):
+            if is_valid_position(left_intersection, left_border) and is_valid_degree(theta):
                 valid_left_lines.append([tuple(lane[i][0]), left_intersection])
                 #draw line
                 cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
@@ -144,7 +144,7 @@ def detect_lanes(img):
         #check with right border
         right_intersection = intersection(line([x1, y1], [x2, y2]), line(right_border[0], right_border[1]))
         if right_intersection:
-            if is_valid_position(right_intersection, right_border):
+            if is_valid_position(right_intersection, right_border) and is_valid_degree(theta):
                 valid_right_lines.append([tuple(lane[i][0]), right_intersection])
                 #draw line
                 cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
@@ -153,8 +153,8 @@ def detect_lanes(img):
         #print 'Linija:{0}, x1:{1}, y1:{2}, x2:{3}, y2:{4}'.format(i, x1, y1, x2, y2)
 
     #Choose one from valid left and right lines
-    left_line = random.choice(valid_left_lines) if len(valid_left_lines) > 0 else False
-    right_line = random.choice(valid_right_lines) if len(valid_right_lines) > 0 else False
+    left_line = max(valid_left_lines, key=lambda t: t[0][0]) if len(valid_left_lines) > 0 else False
+    right_line = min(valid_right_lines, key=lambda t: t[0][0]) if len(valid_right_lines) > 0 else False
 
     #Get distance from middle of the screen
     left_distance = (np.abs(left_line[1][0] - img.shape[1]/2)) if left_line else False

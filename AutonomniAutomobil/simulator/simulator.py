@@ -96,7 +96,6 @@ class Simulator(object):
                     pygame.quit()
                     quit()
 
-
             pygame.display.flip()
             pygame.time.wait(10)
 
