@@ -4,6 +4,7 @@
 #Start app>Start server>Run script
 #Press Esc to stop the script
 
+from __future__ import print_function
 import numpy as np
 import cv2
 import urllib2
@@ -21,6 +22,7 @@ class Camera(object):
     def stream(self):
         hoststr = 'http://{0}/video'.format(self.host)
         stream = urllib2.urlopen(hoststr)
+        f = open('training_data', 'a')
         bytes = ''
         while True:
             bytes += stream.read(1024)
@@ -32,10 +34,14 @@ class Camera(object):
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
                 img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
                 cv2.imshow(hoststr, img)
-                print "LD: ", left_distance
-                print "RD: ", right_distance
+                if left_distance is False:
+                    left_distance = -1
+                if right_distance is False:
+                    right_distance = -1
+                f.write(str(left_distance) + ',' + str(right_distance) + ',1,0,0\n')
                 #1(thresh, im_bw) = cv2.threshold(im_gray, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
                 if cv2.waitKey(1) == 27:
+                    f.close()
                     exit(0)
 
 

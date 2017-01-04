@@ -4,35 +4,33 @@
 #Output: left/right
 
 import pickle
+import util.csv_reader as reader
 
-from neat import population, parallel, visualize, nn
+from neat import population, visualize, nn, statistics
 
 from rc_car import car_model
 
-# TODO evaluate genome
+input_data = reader.read_inputs("../rc_car/training_data")
+output_data = reader.read_outputs("../rc_car/training_data")
 
-num_steps = 100000
 
 def evaluate_genomes(genomes):
-    for genome in genomes:
-        net = nn.create_feed_forward_phenotype(genome)
+    for g in genomes:
+        net = nn.create_feed_forward_phenotype(g)
 
-        fitnesses = []
+        sum_square_error = 0.0
+        for inputs, expected in zip(input_data, output_data):
+            # Serial activation propagates the inputs through the entire network.
 
-        car = car_model.CarModel()
+            output = net.serial_activate(inputs)
+            sum_square_error += (output[0] - expected[0]) ** 2
+            sum_square_error += (output[1] - expected[1]) ** 2
+            sum_square_error += (output[2] - expected[2]) ** 2
+            sum_square_error/=3
 
-        fitness = 0.0
-        for step in range(num_steps):
-            #get inputs
-            inputs = car.get_distances()
-            #get outputs
-            outputs = net.serial_activate(inputs)
-
-
-
-            print outputs
-
-
+        # When the output matches expected for all inputs, fitness will reach
+        # its maximum value of 1.0.
+        g.fitness = 1 - sum_square_error
 
 
 
@@ -41,25 +39,32 @@ def main():
     pop = population.Population('rnn_config')
     # Create parallel evaluator, 4 threads
     # Evaluate genomes
-    pop.run(evaluate_genomes, 1000)
+    pop.run(evaluate_genomes, 500)
 
-    # Save the winner.
-    print('Number of evaluations: {0:d}'.format(pop.total_evaluations))
+    print('Number of evaluations: {0}'.format(pop.total_evaluations))
+
+    # Display the most fit genome.
     winner = pop.statistics.best_genome()
-    with open('nn_winner_genome', 'wb') as f:
-        pickle.dump(winner, f)
+    print('\nBest genome:\n{!s}'.format(winner))
 
-    print(winner)
+    # Verify network output against training data.
+    print('\nOutput:')
+    winner_net = nn.create_feed_forward_phenotype(winner)
+    for inputs, expected in zip(input_data, output_data):
+        output = winner_net.serial_activate(inputs)
+        print("expected {0:1.5f} got {1:1.5f}".format(expected[0], output[0]))
+        print("expected {0:1.5f} got {1:1.5f}".format(expected[1], output[1]))
+        print("expected {0:1.5f} got {1:1.5f}".format(expected[2], output[2]))
 
-    # Plot the evolution of the best/average fitness.
-    visualize.plot_stats(pop.statistics, ylog=True, filename="nn_fitness.svg")
-    # Visualizes speciation
-    visualize.plot_species(pop.statistics, filename="nn_speciation.svg")
-    # Visualize the best network.
-    visualize.draw_net(winner, view=True, filename="nn_winner.gv")
-    visualize.draw_net(winner, view=True, filename="nn_winner-enabled.gv", show_disabled=False)
-    visualize.draw_net(winner, view=True, filename="nn_winner-enabled-pruned.gv", show_disabled=False,
-                       prune_unused=True)
+    # Visualize the winner network and plot/log statistics.
+    visualize.plot_stats(pop.statistics)
+    visualize.plot_species(pop.statistics)
+    visualize.draw_net(winner, view=True, filename="car-all.gv")
+    visualize.draw_net(winner, view=True, filename="car-enabled.gv", show_disabled=False)
+    visualize.draw_net(winner, view=True, filename="car-enabled-pruned.gv", show_disabled=False, prune_unused=True)
+    statistics.save_stats(pop.statistics)
+    statistics.save_species_count(pop.statistics)
+    statistics.save_species_fitness(pop.statistics)
+
 
 main()
-

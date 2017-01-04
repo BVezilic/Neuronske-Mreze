@@ -14,7 +14,7 @@ def read_img(path):
 
 def show_img(img):
     """Shows image in new window. Press ESC to close it."""
-    cv2.imshow('put',img)
+    cv2.imshow('put', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
@@ -106,8 +106,8 @@ def detect_lanes(img):
     lane = lines(edges(img_to_gray(img)))
 
     #border lines for validation
-    left_border = [(10, 60), (50, 60)]
-    right_border = [(124, 60), (164, 60)]
+    left_border = [(10, 60), (60, 60)]
+    right_border = [(114, 60), (164, 60)]
 
     #draw border lines on image
     cv2.line(img, left_border[0], left_border[1], (255, 0, 255), 1)
