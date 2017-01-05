@@ -24,7 +24,7 @@ def read_outputs(file_name):
     return vector
 
 #test
-a = read_inputs('../rc_car/training_data')
-b = read_outputs('../rc_car/training_data')
+a = read_inputs('../ann/training_data')
+b = read_outputs('../ann/training_data')
 print a
 print b

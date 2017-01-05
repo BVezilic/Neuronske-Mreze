@@ -10,8 +10,8 @@ from neat import population, visualize, nn, statistics
 
 from rc_car import car_model
 
-input_data = reader.read_inputs("../rc_car/training_data")
-output_data = reader.read_outputs("../rc_car/training_data")
+input_data = reader.read_inputs("training_data")
+output_data = reader.read_outputs("training_data")
 
 
 def evaluate_genomes(genomes):
