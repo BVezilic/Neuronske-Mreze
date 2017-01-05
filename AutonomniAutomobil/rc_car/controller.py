@@ -40,8 +40,20 @@ class CarController(object):
     def right_stop(self):
         self.ser.write("7")    #Right Low
 
-
-
+    def control(self,cmd):
+        if round(cmd[0]) == 1:
+            self.forward()
+        else:
+            self.forward_stop()
+        if round(cmd[1]) == 1:
+            self.left()
+        else:
+            self.left_stop()
+        if round(cmd[2]) == 1:
+            self.right()
+        else:
+            self.right_stop()
+"""
 car = CarController()
 command = [0, 0, 0, 0]
 
@@ -87,5 +99,7 @@ def control_car():
     root.mainloop()
 
 control_car()
+
+"""
 
 
