@@ -61,7 +61,7 @@ def remove_upper(img, percent):
     return crop_img
 
 
-def is_valid_degree(theta, i1=(-80, -45), i2=(45, 80)):
+def is_valid_degree(theta, i1=(-80, -25), i2=(25, 80)):
     """Check if theta is in one of two intervals"""
     degree = theta * 180 / np.pi - 90
     if i1[0] < degree < i1[1] or i2[0] < degree < i2[1]:
@@ -106,8 +106,8 @@ def detect_lanes(img):
     lane = lines(edges(img_to_gray(img)))
 
     #border lines for validation
-    left_border = [(10, 60), (60, 60)]
-    right_border = [(114, 60), (164, 60)]
+    left_border = [(0, 60), (86, 60)]
+    right_border = [(88, 60), (174, 60)]
 
     #draw border lines on image
     cv2.line(img, left_border[0], left_border[1], (255, 0, 255), 1)

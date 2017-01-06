@@ -39,7 +39,7 @@ def main():
     pop = population.Population('rnn_config')
     # Create parallel evaluator, 4 threads
     # Evaluate genomes
-    pop.run(evaluate_genomes, 500)
+    pop.run(evaluate_genomes, 1000)
 
     print('Number of evaluations: {0}'.format(pop.total_evaluations))
 
