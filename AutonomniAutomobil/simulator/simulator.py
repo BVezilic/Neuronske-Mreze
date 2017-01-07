@@ -8,7 +8,6 @@ import pygame
 from pygame.locals import *
 from OpenGL.GL import *
 
-
 class Simulator(object):
 
     def __init__(self):

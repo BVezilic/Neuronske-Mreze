@@ -1,8 +1,8 @@
 # Author: Nina Marjanovic
-# Description: Streams video using IP Webcam Android application
+# Description: Generating training data
 
-#Start app>Start server>Run script
-#Press Esc to stop the script
+#TODO output
+
 
 from __future__ import print_function
 import numpy as np

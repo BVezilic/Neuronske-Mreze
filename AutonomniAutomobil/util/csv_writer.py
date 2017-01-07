@@ -1,4 +1,5 @@
 #Author: Nina Marjanovic
+#Descrioption: CSV Writer
 
 
 def write_data(f, left_distance, right_distance, front, left, right):

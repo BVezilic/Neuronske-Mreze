@@ -1,10 +1,11 @@
 #Author: Nina Marjanovic
-#csv reader
+#Description: csv reader
 
 import csv
 
 
 def read_inputs(file_name):
+    """Reads input data for rnn"""
     with open(file_name, 'rb') as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=',')
         vector = []
@@ -15,6 +16,7 @@ def read_inputs(file_name):
 
 
 def read_outputs(file_name):
+    """Reads output data for rnn"""
     with open(file_name, 'rb') as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=',')
         vector = []

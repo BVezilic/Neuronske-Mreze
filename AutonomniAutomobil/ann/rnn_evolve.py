@@ -1,7 +1,7 @@
 #Author: Nina Marjanovic
 #Description: Evolving recurrent neural network for rc car control
 #Input: feature vector
-#Output: left/right
+#Output: forward, left, right
 
 import pickle
 import util.csv_reader as reader
@@ -60,16 +60,5 @@ def main():
         print("expected {0:1.5f} got {1:1.5f}".format(expected[0], output[0]))
         print("expected {0:1.5f} got {1:1.5f}".format(expected[1], output[1]))
         print("expected {0:1.5f} got {1:1.5f}".format(expected[2], output[2]))
-
-    # Visualize the winner network and plot/log statistics.
-    visualize.plot_stats(pop.statistics)
-    visualize.plot_species(pop.statistics)
-    visualize.draw_net(winner, view=True, filename="car-all.gv")
-    visualize.draw_net(winner, view=True, filename="car-enabled.gv", show_disabled=False)
-    visualize.draw_net(winner, view=True, filename="car-enabled-pruned.gv", show_disabled=False, prune_unused=True)
-    statistics.save_stats(pop.statistics)
-    statistics.save_species_count(pop.statistics)
-    statistics.save_species_fitness(pop.statistics)
-
 
 main()

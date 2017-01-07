@@ -1,4 +1,5 @@
 #Author: Nina Marjanovic
+#Description: RNN - loading, creating, generating output
 
 import pickle
 
@@ -17,7 +18,6 @@ def create_net(genome):
 
 
 def get_output(genome, input_data):
-    # type: (object, object) -> object
     # type: (object, object) -> object
     """FeedForward through network
     :rtype: object
