@@ -1,5 +1,5 @@
 # Author: Nina Marjanovic
-# Description: Streams video using IP Webcam Android application
+# Description: Streams video using IP Webcam Android application, MAIN
 
 #Start app>Start server>Run script
 #Press Esc to stop the script
@@ -11,12 +11,13 @@ import urllib2
 from ann import rnn
 import lane_detector as fl
 import controller
+from ann.conv_tl_detection import tl_detection as tld
 
 
 class Camera(object):
-    def __init__(self, host='192.168.1.3:8080'):
+    def __init__(self, host='192.168.0.105:8080'):
         self.host = host
-        self.car_controller = controller.CarController()
+        #self.car_controller = controller.CarController()
 
     def stream(self):
         hoststr = 'http://{0}/video'.format(self.host)
@@ -31,12 +32,16 @@ class Camera(object):
                 jpg = bytes[a:b + 2]
                 bytes = bytes[b + 2:]
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
-                img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
+                # detect stop
+                tld.detect(img)
+                # detect lanes
+                #img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
                 cv2.imshow(hoststr, img)
-                genome = rnn.load_genome("../ann/winner_net")
-                output = rnn.get_output(genome, [left_distance, right_distance])
-                self.car_controller.control(output)
-                print (output)
+                #genome = rnn.load_genome("../ann/winner_net")
+                # control
+                #output = rnn.get_output(genome, [left_distance, right_distance])
+                #self.car_controller.control(output)
+                #print (output)
                 if cv2.waitKey(1) == 27:
                     f.close()
                     exit(0)
