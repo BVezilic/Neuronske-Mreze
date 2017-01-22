@@ -4,7 +4,7 @@
 #Start app>Start server>Run script
 #Press Esc to stop the script
 
-from __future__ import print_function
+#from __future__ import print_function
 import numpy as np
 import cv2
 import urllib2
@@ -17,7 +17,7 @@ from ann.conv_tl_detection import tl_detection as tld
 class Camera(object):
     def __init__(self, host='192.168.0.105:8080'):
         self.host = host
-        #self.car_controller = controller.CarController()
+        self.car_controller = controller.CarController()
 
     def stream(self):
         hoststr = 'http://{0}/video'.format(self.host)
@@ -32,15 +32,20 @@ class Camera(object):
                 jpg = bytes[a:b + 2]
                 bytes = bytes[b + 2:]
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
-                # detect stop
-                tld.detect(img)
+                # detect traffic light
+                tl_distance = tld.detect(img)
+                # detect STOP sign
+                stop_distance = -1      # TODO - rastojanje do stop znaka, u suprotnom -1
+                # detect vehicle
+                vehicle_distance = -1   # TODO - rastojanje do vozila, u suprotnom -1
                 # detect lanes
-                #img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
-                cv2.imshow(hoststr, img)
-                #genome = rnn.load_genome("../ann/winner_net")
+                img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
+                genome = rnn.load_genome("../ann/rnn/winner_net")
                 # control
-                #output = rnn.get_output(genome, [left_distance, right_distance])
-                #self.car_controller.control(output)
+                output = rnn.get_output(genome, [left_distance, right_distance,
+                                                 tl_distance, stop_distance, vehicle_distance])
+                cv2.imshow(hoststr, img)
+                self.car_controller.control(output)
                 #print (output)
                 if cv2.waitKey(1) == 27:
                     f.close()
