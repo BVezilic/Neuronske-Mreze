@@ -12,6 +12,7 @@ from ann import rnn
 import lane_detector as fl
 import controller
 from ann.conv_tl_detection import tl_detection as tld
+from object_detection import sign_detection as sd
 
 
 class Camera(object):
@@ -35,7 +36,7 @@ class Camera(object):
                 # detect traffic light
                 tl_distance = tld.detect(img)
                 # detect STOP sign
-                stop_distance = -1      # TODO - rastojanje do stop znaka, u suprotnom -1
+                stop_distance, stop_img = sd.detect(img)
                 # detect vehicle
                 vehicle_distance = -1   # TODO - rastojanje do vozila, u suprotnom -1
                 # detect lanes
