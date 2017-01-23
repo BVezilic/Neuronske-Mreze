@@ -1,12 +1,14 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import cnn
 
 car_height = 58.5 #fiksan
 camera_height = 90 #promenljiv
 image_height = 144 #fiksan
 focal_length = 40 #fiksan
 known_width = 75 #fiksan
+model = cnn.load_model()
 
 def load_image(path):
     return cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
@@ -53,8 +55,9 @@ def select_roi(image_orig):
         #if area > 100 and h < 100 and h > 15 and w > 20 and w < 110 and x > 40:
         if h < 100 and h > 15 and w > 20 and w < 110 and x > 40 and y < 100:
         #if area > 100 and area < 200:
-            #region = img_bin[y:y + h + 1, x:x + w + 1]
+            region = image_orig[y:y + h + 1, x:x + w + 1]
             print '{}{}{}{}{}{}{}{}'.format("X: ",x, " Y: ", y, " W: ", w, " H: ",h)
+            print cnn.is_car(region, model)
             cv2.rectangle(image_orig, (x, y), (x + w, y + h), (0, 255, 0), 2)
             #distance_f = (focal_length*car_height*image_height)/(car_height*camera_height)
             distance_t = (known_width*focal_length)/w # slicnost trouglova
