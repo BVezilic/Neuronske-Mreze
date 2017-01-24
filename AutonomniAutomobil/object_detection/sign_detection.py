@@ -1,59 +1,72 @@
+#autor: Branislav Vezilic
+
+import numpy as np
 import cv2
 
 
-def detect_cars(image):
-    # constants
-    IMAGE_SIZE = 200.0
-    MATCH_THRESHOLD = 1
+def detect(img):
+    '''
+    :param img: image in BGR color space
+    :return:
+        dist - distance to 'STOP' sign
+        img - image with detected 'STOP' sign
+    '''
+    # Convert BGR to HSV
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    #cascade_url = 'frontal_stop_sign_cascade.xml'
-    cascade_url = 'xml/cas1.xml'
-    img_url = 'Cars/car2.jpg'
-    roundabout_cascade = cv2.CascadeClassifier(cascade_url)
-    street = image #cv2.imread(img_url)
-    #street = cv2.resize(street, (300, 300))
+    # Define range of red color in HSV
+    lower_red1 = np.array([0, 50, 50])
+    upper_red1 = np.array([10, 255, 255])
 
-    # detekcija znaka na slici
-    gray = cv2.cvtColor(street, cv2.COLOR_RGB2GRAY)
-    signs = roundabout_cascade.detectMultiScale(
-        gray,
-        scaleFactor=1.5,
-        minNeighbors=3
-    )
-    #print signs
-    #orb i feature matcher
-    orb = cv2.ORB()
-    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    lower_red2 = np.array([170, 50, 50])
+    upper_red2 = np.array([180, 255, 255])
 
-    # kljucne karakteristike za znake koje sluze za odbacivanje lose prepoznatih delova
-    roadsign = cv2.imread('orb_examples/orb_feature.jpg', 0)
-    kp_r, des_r = orb.detectAndCompute(roadsign, None)
+    # Threshold the HSV image to get only blue colors
+    mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+    mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
 
-    # prolazak kroz sve znake
-    for (x, y, w, h) in signs:
+    # Bitwise-OR of the masks
+    mask = cv2.bitwise_or(mask1, mask2)
 
-        # vadjenje objekta
-        obj = gray[y:y + h, x:x + w]
-        ratio = IMAGE_SIZE / obj.shape[1]
-        obj = cv2.resize(obj, (int(IMAGE_SIZE), int(obj.shape[0] * ratio)))
+    # Initialize distance
+    dist = -1
 
-        # pronalazenje karakteristika na slici
-        kp_o, des_o = orb.detectAndCompute(obj, None)
-        if len(kp_o) == 0 or des_o == None: continue
+    # Finding contours in mask image
+    img2, contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+        area = cv2.contourArea(cnt)
+        # Conditions that have to be satisfied for valid 'STOP' sign
+        if area > 200 and x > mask.shape[1]/2:
+            # Draw rectangle over 'STOP' sign
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # Calculate distance to 'STOP' sign
+            dist = distance(w)
 
-        matches = bf.match(des_r, des_o)
-
-        # obelezavanje detektovanog znaka
-        #if (len(matches) >= MATCH_THRESHOLD):
-        cv2.rectangle(street, (x, y), (x + w, y + h), (255, 0, 0), 2)
-        print 'Koordinate: {0}, '.format((x, y, w, h))
-
-        # decode the results into a list of tuples (class, description, probability)
-        # (one such list for each sample in the batch)
+    return dist, img
 
 
+def distance(width_in_pix):
+    '''
+    :param width_in_pix: width of object in image
+    :return: distance to 'STOP' sign
+    '''
+    known_distance = 8.0
+    known_width = 4.0
+    focal_length = get_focal_length(known_distance, known_width)
+    return (known_width * focal_length) / width_in_pix
 
-    return street
-    # cv2.imshow('stop', street)
-    # cv2.waitKey(3000000)
-    # cv2.destroyAllWindows()
+
+def get_focal_length(known_distance, known_width, width_in_pixels=80):
+    return (width_in_pixels * known_distance) / known_width
+
+
+def test():
+    path = "C:\Users\Bane Vezilic\Desktop\sign.jpg"
+    dist, img = detect(cv2.imread(path))
+    print dist
+    cv2.imshow('STOP', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+#test()

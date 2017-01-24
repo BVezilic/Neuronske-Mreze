@@ -9,14 +9,15 @@ import numpy as np
 import cv2
 import urllib2
 #from ann import rnn
-import lane_detector as fl
-import object_detection.car_detection as cd
+#import lane_detector as fl
 import object_detection.sign_detection as sd
+#import object_detection.car_detection as cd
+
 #import controller
 
 
 class Camera(object):
-    def __init__(self, host='192.168.0.17:8080'):
+    def __init__(self, host='192.168.1.7:8080'):
         self.host = host
         #self.car_controller = controller.CarController()
 
@@ -33,10 +34,10 @@ class Camera(object):
                 jpg = bytes[a:b + 2]
                 bytes = bytes[b + 2:]
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
-                #img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
-                #img = sd.detect_cars(img)
-                img = cd.select_roi(img)
-                cv2.imshow('str',img)
+                # img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
+                img = sd.detect_focal(img)
+                #img = cd.select_roi(img)
+                cv2.imshow(hoststr, img)
                 # genome = rnn.load_genome("../ann/winner_net")
                 # output = rnn.get_output(genome, [left_distance, right_distance])
                 # self.car_controller.control(output)
