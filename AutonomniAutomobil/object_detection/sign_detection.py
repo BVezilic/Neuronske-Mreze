@@ -15,11 +15,11 @@ def detect(img):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # Define range of red color in HSV
-    lower_red1 = np.array([0, 50, 50])
-    upper_red1 = np.array([10, 255, 255])
+    lower_red1 = np.array([0, 100, 100])
+    upper_red1 = np.array([9, 235, 235])
 
-    lower_red2 = np.array([170, 50, 50])
-    upper_red2 = np.array([180, 255, 255])
+    lower_red2 = np.array([170, 100, 100])
+    upper_red2 = np.array([179, 235, 235])
 
     # Threshold the HSV image to get only blue colors
     mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
@@ -38,6 +38,7 @@ def detect(img):
         area = cv2.contourArea(cnt)
         # Conditions that have to be satisfied for valid 'STOP' sign
         if area > 200 and x > mask.shape[1]/2:
+            print area
             # Draw rectangle over 'STOP' sign
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
             # Calculate distance to 'STOP' sign
