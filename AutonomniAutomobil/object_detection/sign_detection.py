@@ -7,7 +7,7 @@ def detect_cars(image):
     MATCH_THRESHOLD = 1
 
     #cascade_url = 'frontal_stop_sign_cascade.xml'
-    cascade_url = 'cars.xml'
+    cascade_url = 'xml/cas1.xml'
     img_url = 'Cars/car2.jpg'
     roundabout_cascade = cv2.CascadeClassifier(cascade_url)
     street = image #cv2.imread(img_url)
@@ -17,8 +17,8 @@ def detect_cars(image):
     gray = cv2.cvtColor(street, cv2.COLOR_RGB2GRAY)
     signs = roundabout_cascade.detectMultiScale(
         gray,
-        scaleFactor=1.1,
-        minNeighbors=1
+        scaleFactor=1.5,
+        minNeighbors=3
     )
     #print signs
     #orb i feature matcher
@@ -44,9 +44,9 @@ def detect_cars(image):
         matches = bf.match(des_r, des_o)
 
         # obelezavanje detektovanog znaka
-        if (len(matches) >= MATCH_THRESHOLD):
-            cv2.rectangle(street, (x, y), (x + w, y + h), (255, 0, 0), 2)
-            print 'Koordinate: {0}, '.format((x, y, w, h))
+        #if (len(matches) >= MATCH_THRESHOLD):
+        cv2.rectangle(street, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        print 'Koordinate: {0}, '.format((x, y, w, h))
 
         # decode the results into a list of tuples (class, description, probability)
         # (one such list for each sample in the batch)

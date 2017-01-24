@@ -88,14 +88,23 @@ def train():
     model.save_weights("tezine.h5")
 
 
-def is_car(image):
+def load_predictor():
     model = get_model()
     model.load_weights('tezine.h5')
+    return model
+
+
+def is_car(image,model):
+    image /= 255
     return model.predict(np.array(cv2.resize(image, (64, 64))).reshape(1, 64, 64, 3))
 
 
 if __name__ == '__main__':
     #train()
-    img = cv2.imread('D:\\FTN\\Master\\Neuronske mreze\\OwnCollection\\non-vehicles\\MiddleClose\\image0100.png')
-    print is_car(img)
-
+    img = cv2.imread('C:\\Users\\Komp\\Desktop\\NM\\TestGitCars\\Cars\\car7.jpg')
+    #img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    model = load_predictor()
+    print is_car(img,model)
+    #print 'a'
+    '''
+'''
