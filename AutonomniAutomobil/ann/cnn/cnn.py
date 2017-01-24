@@ -122,7 +122,8 @@ def load_model():
 
 def is_car(image, model):
     image /= 255
-    return model.predict(np.array(cv2.resize(image, (64, 64))).reshape(1, 64, 64, 3))
+    retVal = model.predict(np.array(cv2.resize(image, (64, 64))).reshape(1, 64, 64, 3))
+    return True if retVal[0] > retVal[1] else False
 
 
 def test():
