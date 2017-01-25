@@ -9,12 +9,11 @@ import urllib2
 
 import cv2
 import numpy as np
-from ann.conv_tl_detection import tl_detection as tld
-
 import controller
 import object_detection.lane_detector as fl
 from ann import rnn
 from ann.cnn import cnn
+from object_detection import tl_detection as tld
 from object_detection import sign_detection as sd
 
 
