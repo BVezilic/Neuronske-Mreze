@@ -27,7 +27,6 @@ def load(path, split_data = 0.1):
                 x_train.append(img)
                 y_train.append(0)
             else:
-                print counter
                 x_test.append(img)
                 y_test.append(0)
             counter += 1
@@ -116,14 +115,14 @@ def train():
 
 def load_model():
     model = get_model()
-    model.load_weights('tezine.h5')
+    model.load_weights('../ann/cnn/tezine.h5')
     return model
 
 
 def is_car(image, model):
     image /= 255
     retVal = model.predict(np.array(cv2.resize(image, (64, 64))).reshape(1, 64, 64, 3))
-    return True if retVal[0] > retVal[1] else False
+    return True if retVal[0][0] > retVal[0][1] else False
 
 
 def test():
@@ -131,5 +130,5 @@ def test():
     print is_car(img, load_model())
 
 #test()
-train()
+#train()
 

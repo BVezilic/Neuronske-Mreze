@@ -1,9 +1,8 @@
 import cv2
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 import ann.cnn.cnn as cnn
-import rc_car.lane_detector as fl
-from scipy import ndimage
 
 car_height = 58.5  # fiksan
 camera_height = 90  # promenljiv
@@ -67,6 +66,7 @@ def winner(output):
 
 model = cnn.load_predictor()
 
+
 def select_roi(image_orig):
     img_bin = image_bin(image_gray(image_orig))
 
@@ -92,7 +92,7 @@ def select_roi(image_orig):
     #return np.array(image_orig)
     # return np.array(img_bin)
     # return np.array(edges)
-    return distance_t if cnn.is_car(region,model) else -1
+    return distance_t if cnn.is_car(region, model) else -1
 
 
 '''

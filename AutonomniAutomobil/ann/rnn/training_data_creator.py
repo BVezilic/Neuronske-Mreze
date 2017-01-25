@@ -5,13 +5,15 @@
 
 
 from __future__ import print_function
-import numpy as np
-import cv2
+
 import urllib2
-from util import csv_writer
-from rc_car import lane_detector as fl
-from rc_car import controller
 from multiprocessing import Pool
+
+import cv2
+import numpy as np
+
+from object_detection import lane_detector as fl
+from rc_car import controller
 
 
 class Camera(object):

@@ -5,13 +5,16 @@
 #Press Esc to stop the script
 
 #from __future__ import print_function
-import numpy as np
-import cv2
 import urllib2
-from ann import rnn
-import lane_detector as fl
-import controller
+
+import cv2
+import numpy as np
 from ann.conv_tl_detection import tl_detection as tld
+
+import controller
+import object_detection.lane_detector as fl
+from ann import rnn
+from ann.cnn import cnn
 from object_detection import sign_detection as sd
 
 
@@ -38,13 +41,13 @@ class Camera(object):
                 # detect STOP sign
                 stop_distance, stop_img = sd.detect(img)
                 # detect vehicle
-                vehicle_distance = -1   # TODO - rastojanje do vozila, u suprotnom -1
+                is_vehicle = cnn.is_car(img.copy()[70:144, 20:156], cnn.get_model())
                 # detect lanes
                 img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
                 genome = rnn.load_genome("../ann/rnn/winner_net")
                 # control
                 output = rnn.get_output(genome, [left_distance, right_distance,
-                                                 tl_distance, stop_distance, vehicle_distance])
+                                                 tl_distance, stop_distance])
                 cv2.imshow(hoststr, img)
                 self.car_controller.control(output)
                 #print (output)
