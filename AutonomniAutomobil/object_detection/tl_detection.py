@@ -1,4 +1,6 @@
 # Author: Nina Marjanovic
+# Description: Detecting traffic lights using openCV contours and hough circles
+
 
 import numpy as np
 import cv2
