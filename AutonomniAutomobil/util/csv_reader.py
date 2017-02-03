@@ -12,8 +12,8 @@ def read_inputs(file_name):
         vector = []
         for row in csv_reader:
             data = [int(row[0]), int(row[1])]
-            data_normalized = sp.normalize([data], norm='l2')
-            vector.append(data_normalized[0])
+            #data_normalized = sp.normalize([data], norm='l2')
+            vector.append(data)
     csvfile.close()
     return vector
 
