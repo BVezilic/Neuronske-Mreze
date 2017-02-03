@@ -15,6 +15,7 @@ def load_genome(filename='winner_net'):
 def create_net(genome):
     """Creates rnn based on genome"""
     return nn.create_recurrent_phenotype(genome)
+    #return nn.create_feed_forward_phenotype(genome)
 
 
 def get_output(genome, input_data):
@@ -23,6 +24,7 @@ def get_output(genome, input_data):
     :rtype: object
     """
     net = create_net(genome)
+    #return net.serial_activate(input_data)
     return net.activate(input_data)
 
 

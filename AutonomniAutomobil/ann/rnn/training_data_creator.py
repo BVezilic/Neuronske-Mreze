@@ -4,7 +4,6 @@
 #TODO output
 
 
-from __future__ import print_function
 
 import urllib2
 from multiprocessing import Pool
@@ -15,13 +14,15 @@ import numpy as np
 from object_detection import lane_detector as fl
 from rc_car import controller
 
+from util import csv_writer
+
 
 class Camera(object):
-    def __init__(self, host='192.168.1.3:8080'):
+    def __init__(self, host='192.168.0.105:8080'):
         self.host = host
 
     def stream(self):
-        f = open('training_data', 'a')
+        #f = open('training_data', 'a')
         hoststr = 'http://{0}/video'.format(self.host)
         stream = urllib2.urlopen(hoststr)
         bytes = ''
@@ -35,8 +36,9 @@ class Camera(object):
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
                 img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
                 cv2.imshow(hoststr, img)
-                print (left_distance, right_distance)
-                #csv_writer.write_data(f, left_distance, right_distance, front, left, right) #creating dataset
+                #print left_line[0][0]
+                print "{0},{1}".format(left_distance, right_distance)
+                #csv_writer.write_data(f, left_distance, right_distance) #creating dataset
                 if cv2.waitKey(1) == 27:
                     exit(0)
 
@@ -53,8 +55,8 @@ def control():
 
 def main():
     pool = Pool(processes=2)
-    pool.apply_async(control)
     pool.apply_async(run_camera)
+    pool.apply_async(control)
     pool.close()
     pool.join()
 

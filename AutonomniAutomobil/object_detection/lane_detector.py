@@ -135,30 +135,43 @@ def detect_lanes(img):
         left_intersection = intersection(line([x1, y1], [x2, y2]), line(left_border[0], left_border[1]))
         if left_intersection:
             if is_valid_position(left_intersection, left_border) and is_valid_degree(theta):
-                valid_left_lines.append([tuple(lane[i][0]), left_intersection])
+                valid_left_lines.append([x1, y1, x2, y2])
                 #draw line
-                cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                #cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
         else:
             print 'WARRNING: No intersection on left border.'
 
+        temp1 = 0
+        temp2 = 0
+        temp3 = 0
+        temp4 = 0
         #check with right border
         right_intersection = intersection(line([x1, y1], [x2, y2]), line(right_border[0], right_border[1]))
         if right_intersection:
             if is_valid_position(right_intersection, right_border) and is_valid_degree(theta):
-                valid_right_lines.append([tuple(lane[i][0]), right_intersection])
+                valid_right_lines.append([x1, y1, x2, y2])
                 #draw line
-                cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                #cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                temp1 = x1
+                temp2 = y1
+                temp3 = x2
+                temp4 = y2
         else:
             print 'WARRNING: No intersection on right border.'
         #print 'Linija:{0}, x1:{1}, y1:{2}, x2:{3}, y2:{4}'.format(i, x1, y1, x2, y2)
 
     #Choose one from valid left and right lines
-    left_line = max(valid_left_lines, key=lambda t: t[0][0]) if len(valid_left_lines) > 0 else False
-    right_line = min(valid_right_lines, key=lambda t: t[0][0]) if len(valid_right_lines) > 0 else False
+    left_line = max(valid_left_lines, key=lambda t: t[0]) if len(valid_left_lines) > 0 else False
+    if left_line is not False:
+        cv2.line(img, (left_line[0], left_line[1]), (left_line[2], left_line[3]), (0, 255, 0), 3)
+    right_line = min(valid_right_lines, key=lambda t: t[0]) if len(valid_right_lines) > 0 else False
+    if right_line is not False:
+        cv2.line(img, (right_line[0], right_line[1]),(right_line[2], right_line[3]), (0, 255, 0), 3)
+
 
     #Get distance from middle of the screen
-    left_distance = (np.abs(left_line[1][0] - img.shape[1]/2)) if left_line else False
-    right_distance = (np.abs(right_line[1][0] - img.shape[1]/2)) if right_line else False
+    left_distance = (np.abs(left_line[0] - img.shape[1]/2)) if left_line else False
+    right_distance = (np.abs(right_line[0] - img.shape[1]/2)) if right_line else False
 
     return img, left_distance, right_distance, left_line, right_line
 

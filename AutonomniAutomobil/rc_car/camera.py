@@ -11,10 +11,11 @@ import cv2
 import numpy as np
 import controller
 import object_detection.lane_detector as fl
-from ann import rnn
-from ann.cnn import cnn
-from object_detection import tl_detection as tld
+from ann.rnn import rnn
+#from ann.cnn import cnn
+from object_detection import tl_detection3 as tld
 from object_detection import sign_detection as sd
+import sklearn.preprocessing as sp
 
 
 class Camera(object):
@@ -25,7 +26,6 @@ class Camera(object):
     def stream(self):
         hoststr = 'http://{0}/video'.format(self.host)
         stream = urllib2.urlopen(hoststr)
-        f = open('training_data', 'a')
         bytes = ''
         while True:
             bytes += stream.read(1024)
@@ -36,22 +36,26 @@ class Camera(object):
                 bytes = bytes[b + 2:]
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
                 # detect traffic light
-                tl_distance = tld.detect(img)
+                #tl_distance = tld.detect(img)[0]
+                #print tl_distance
                 # detect STOP sign
-                stop_distance, stop_img = sd.detect(img)
+                #stop_distance, stop_img = sd.detect(img)
                 # detect vehicle
-                is_vehicle = cnn.is_car(img.copy()[70:144, 20:156], cnn.get_model())
+                #is_vehicle = cnn.is_car(img.copy()[70:144, 20:156], cnn.get_model())
                 # detect lanes
                 img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
-                genome = rnn.load_genome("../ann/rnn/winner_net")
+
+                print left_distance
+                print right_distance
+                genome = rnn.load_genome("../ann/rnn/winner_net_left")
                 # control
-                output = rnn.get_output(genome, [left_distance, right_distance,
-                                                 tl_distance, stop_distance])
+                data = [left_distance, right_distance]
+                data_normalized = sp.normalize([data], norm='l2')
+                output = rnn.get_output(genome, data_normalized[0])
                 cv2.imshow(hoststr, img)
                 self.car_controller.control(output)
-                #print (output)
+                print (output)
                 if cv2.waitKey(1) == 27:
-                    f.close()
                     exit(0)
 
 
