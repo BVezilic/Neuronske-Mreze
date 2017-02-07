@@ -18,7 +18,7 @@ from util import csv_writer
 
 
 class Camera(object):
-    def __init__(self, host='192.168.0.105:8080'):
+    def __init__(self, host='192.168.0.102:8080'):
         self.host = host
 
     def stream(self):
@@ -34,7 +34,7 @@ class Camera(object):
                 jpg = bytes[a:b + 2]
                 bytes = bytes[b + 2:]
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
-                img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
+                img, left_distance, right_distance, left_line, right_line = fl.detect_lanes(img)
                 cv2.imshow(hoststr, img)
                 #print left_line[0][0]
                 print "{0},{1}".format(left_distance, right_distance)

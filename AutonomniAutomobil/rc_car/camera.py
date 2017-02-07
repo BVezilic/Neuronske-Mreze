@@ -1,5 +1,6 @@
 # Author: Nina Marjanovic
 # Description: Streams video using IP Webcam Android application, MAIN
+#              Uses evolved RNN to control a RC car
 
 #Start app>Start server>Run script
 #Press Esc to stop the script
@@ -50,8 +51,8 @@ class Camera(object):
                 genome = rnn.load_genome("../ann/rnn/winner_net_left")
                 # control
                 data = [left_distance, right_distance]
-                data_normalized = sp.normalize([data], norm='l2')
-                output = rnn.get_output(genome, data_normalized[0])
+                #data_normalized = sp.normalize([data], norm='l2')
+                output = rnn.get_output(genome, data)
                 cv2.imshow(hoststr, img)
                 self.car_controller.control(output)
                 print (output)

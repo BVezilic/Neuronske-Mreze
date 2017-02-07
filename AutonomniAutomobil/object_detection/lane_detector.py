@@ -100,7 +100,8 @@ def detect_lanes(img):
     valid_right_lines = []
 
     #crop image to show bottom half of image
-    img = remove_upper(img, 50)
+    img = remove_upper(img, 45)
+    #img = img[30:, 0:]
 
     #find lines in image
     lane = lines(edges(img_to_gray(img)))
@@ -138,13 +139,7 @@ def detect_lanes(img):
                 valid_left_lines.append([x1, y1, x2, y2])
                 #draw line
                 #cv2.line(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
-        else:
-            print 'WARRNING: No intersection on left border.'
 
-        temp1 = 0
-        temp2 = 0
-        temp3 = 0
-        temp4 = 0
         #check with right border
         right_intersection = intersection(line([x1, y1], [x2, y2]), line(right_border[0], right_border[1]))
         if right_intersection:
@@ -152,12 +147,6 @@ def detect_lanes(img):
                 valid_right_lines.append([x1, y1, x2, y2])
                 #draw line
                 #cv2.line(img, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                temp1 = x1
-                temp2 = y1
-                temp3 = x2
-                temp4 = y2
-        else:
-            print 'WARRNING: No intersection on right border.'
         #print 'Linija:{0}, x1:{1}, y1:{2}, x2:{3}, y2:{4}'.format(i, x1, y1, x2, y2)
 
     #Choose one from valid left and right lines
@@ -168,10 +157,12 @@ def detect_lanes(img):
     if right_line is not False:
         cv2.line(img, (right_line[0], right_line[1]),(right_line[2], right_line[3]), (0, 255, 0), 3)
 
-
     #Get distance from middle of the screen
-    left_distance = (np.abs(left_line[0] - img.shape[1]/2)) if left_line else False
-    right_distance = (np.abs(right_line[0] - img.shape[1]/2)) if right_line else False
+    #left_distance = (np.abs(np.abs(left_line[0]) - img.shape[1]/2)) if left_line else False
+    #right_distance = (np.abs(np.abs(right_line[0]) - img.shape[1]/2)) if right_line else False
+
+    left_distance = right_line[0] if right_line else False
+    right_distance = right_line[2] if right_line else False
 
     return img, left_distance, right_distance, left_line, right_line
 
