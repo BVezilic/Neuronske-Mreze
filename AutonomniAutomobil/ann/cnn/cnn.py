@@ -23,7 +23,8 @@ def load(path, split_data = 0.1):
     for folder in os.listdir(vehicle_path):
         for image in os.listdir(os.path.join(vehicle_path, folder)):
             img = cv2.imread(os.path.join(os.path.join(vehicle_path, folder), image))
-            if counter % int(split_data*100) != 0:
+            img = cv2.resize(img, (64, 64))
+            if counter % int(1/split_data) != 0:
                 x_train.append(img)
                 y_train.append(0)
             else:
@@ -35,7 +36,8 @@ def load(path, split_data = 0.1):
     for folder in os.listdir(non_vehicle_path):
         for image in os.listdir(os.path.join(non_vehicle_path, folder)):
             img = cv2.imread(os.path.join(os.path.join(non_vehicle_path, folder), image))
-            if counter % int(split_data*100) != 0:
+            img = cv2.resize(img, (64, 64))
+            if counter % int(1/split_data) != 0:
                 x_train.append(img)
                 y_train.append(1)
             else:
@@ -87,7 +89,7 @@ def get_model():
 
 
 def train():
-    (x_train, y_train), (x_test, y_test) = load_data("D:\FTN\Master\Neuronske mreze\OwnCollection")
+    (x_train, y_train), (x_test, y_test) = load_data("D:\FTN\Master\Neuronske mreze\Homemade")
     x_train = x_train.astype('float32')
     x_test = x_test.astype('float32')
     x_train /= 255
@@ -97,15 +99,15 @@ def train():
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
     # ucitavanje tezina sa najboljim rezultatom
-    # model.load_weights('weights.h5')
+    model.load_weights('weights.h5')
 
     # callback koji snima tezine modela
-    mc = ModelCheckpoint('weights.h5', monitor='val_loss', save_weights_only=True, save_best_only=True)
+    mc = ModelCheckpoint('weights2.h5', monitor='val_loss', save_weights_only=True, save_best_only=True)
 
     # sada radimo fine-tuning celog modela
     model.fit(x_train, y_train,
               batch_size=32,
-              nb_epoch=5,
+              nb_epoch=20,
               shuffle=True,
               validation_data=(x_test, y_test),
               callbacks=[mc])
@@ -115,7 +117,7 @@ def train():
 
 def load_model():
     model = get_model()
-    model.load_weights('../ann/cnn/tezine.h5')
+    model.load_weights('../ann/cnn/weights2.h5')
     return model
 
 
