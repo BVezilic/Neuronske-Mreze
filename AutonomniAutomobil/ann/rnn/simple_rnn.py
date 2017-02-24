@@ -26,7 +26,7 @@ def create_model():
     model.add(Activation('sigmoid'))
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',
-                  metrics=['precision'])
+                  metrics=['accuracy'])
     return model
 
 

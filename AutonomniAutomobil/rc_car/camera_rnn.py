@@ -22,10 +22,11 @@ import time
 
 
 class Camera(object):
-    def __init__(self, host='192.168.0.104:8080'):
+    def __init__(self, host='192.168.0.102:8080'):
         self.host = host
-        self.car_controller = controller.CarController()
+        #self.car_controller = controller.CarController()
         self.rnn = sr.create_model()
+        self.frame_counter = 0
         self.rnn.load_weights("../ann/rnn/weights.h5")
         self.cnn = cnn.load_model()
         self.detected_stop = False
@@ -42,42 +43,52 @@ class Camera(object):
                 jpg = bytes[a:b + 2]
                 bytes = bytes[b + 2:]
                 img = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), 1)
-                # detect traffic light
-                tl_distance, img_tl = tld.detect(img)
+                orig_img = img.copy()
+                # increase frame_counter
+                self.frame_counter += 1
+                if self.frame_counter % 1 == 0:
+                    # detect traffic light
+                    tl_distance, img_tl = tld.detect(img)
 
-                # detect STOP sign
-                if self.detected_stop is False:
-                    stop_distance = sd.detect(img)[0]
+                    # detect STOP sign
+                    if self.detected_stop is False:
+                        stop_distance = sd.detect(img)[0]
 
-                # detect vehicle
-                is_vehicle = cnn.is_car(img.copy()[70:144, 20:156], self.cnn)
-                print is_vehicle
+                    # detect vehicle [70:144, 20:156]
+                    is_vehicle = cnn.is_car(img.copy(), self.cnn)
+                    #cv2.rectangle(img, (20, 70), (156, 144), (255, 0, 0))
+                    print "AUFTIC: " + str(is_vehicle)
 
-                if tl_distance != -1:
-                    self.car_controller.control([0.0, 0.0, 0.0])
-                    print "TRAFFIC LIGHT - RED!"
-                if stop_distance != -1:
-                    print "STOP"
-                    start_time = time.time()
-                    self.detected_stop = True
-                    while time.time() - start_time < 3:
-                        self.car_controller.control([0.0, 0.0, 0.0])
-                    stop_distance = -1
-                    self.detected_stop = True
-                if is_vehicle:
-                    print "VEHICLE DETECTED!"
-                    self.car_controller.control([0.0, 0.0, 0.0])
+                    if tl_distance != -1:
+                        #self.car_controller.control([0.0, 0.0, 0.0])
+                        print "TRAFFIC LIGHT - RED!"
+                    if stop_distance != -1:
+                        print "STOP"
+                        start_time = time.time()
+                        self.detected_stop = True
+                        while time.time() - start_time < 3:
+                            pass#self.car_controller.control([0.0, 0.0, 0.0])
+                        stop_distance = -1
+                        self.detected_stop = True
+                    if is_vehicle:
+                        pass#int "VEHICLE DETECTED!"
+                        #self.car_controller.control([0.0, 0.0, 0.0])
                     # detect lanes
-                img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
+                    img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
 
-                #print left_distance
-                #print right_distance
-                # control
-                data = [left_distance, right_distance]
-                output = self.rnn.predict(np.expand_dims(np.array([data]),axis=0))
-                #print output
-                cv2.imshow(hoststr, img)
-                self.car_controller.control(output[0][0])
+                    #print left_distance
+                    #print right_distance
+                    # control
+                    data = [left_distance, right_distance]
+                    output = self.rnn.predict(np.expand_dims(np.array([data]),axis=0))
+                    #print output
+                    #self.car_controller.control(output[0][0])
+                    # reset frame_counter
+                    self.frame_counter = 0
+                    # merge with original image
+                    orig_img[64:, 0:] = img
+
+                cv2.imshow(hoststr, orig_img)
                 if cv2.waitKey(1) == 27:
                     exit(0)
 
