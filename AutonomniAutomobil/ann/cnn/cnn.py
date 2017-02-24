@@ -99,10 +99,10 @@ def train():
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
     # ucitavanje tezina sa najboljim rezultatom
-    model.load_weights('weights.h5')
+    #model.load_weights('weights.h5')
 
     # callback koji snima tezine modela
-    mc = ModelCheckpoint('weights3.h5', monitor='val_loss', save_weights_only=True, save_best_only=True)
+    mc = ModelCheckpoint('weights4.h5', monitor='val_loss', save_weights_only=True, save_best_only=True)
 
     # sada radimo fine-tuning celog modela
     model.fit(x_train, y_train,
@@ -115,9 +115,9 @@ def train():
     #model.save_weights("tezine.h5")
 
 
-def load_model():
+def load_model(filename):
     model = get_model()
-    model.load_weights('../ann/cnn/weights3.h5')
+    model.load_weights('../ann/cnn/' + filename)
     return model
 
 

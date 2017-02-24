@@ -12,7 +12,7 @@ from Tkinter import *
 
 class CarController(object):
 
-    def __init__(self, usb_port='COM5'):
+    def __init__(self, usb_port='COM3'):
         ser = serial.Serial(usb_port, 9600)
         self.ser = ser
         self.command = [0, 0, 0, 0]

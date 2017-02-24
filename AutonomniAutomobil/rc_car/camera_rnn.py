@@ -24,11 +24,12 @@ import time
 class Camera(object):
     def __init__(self, host='192.168.0.102:8080'):
         self.host = host
-        #self.car_controller = controller.CarController()
+        self.car_controller = controller.CarController()
         self.rnn = sr.create_model()
         self.frame_counter = 0
+        self.car_counter = 0
         self.rnn.load_weights("../ann/rnn/weights.h5")
-        self.cnn = cnn.load_model()
+        self.cnn = cnn.load_model('tezine.h5')
         self.detected_stop = False
 
     def stream(self):
@@ -48,16 +49,18 @@ class Camera(object):
                 self.frame_counter += 1
                 if self.frame_counter % 1 == 0:
                     # detect traffic light
-                    tl_distance, img_tl = tld.detect(img)
+                    tl_distance=-1#, img_tl = tld.detect(img)
 
                     # detect STOP sign
-                    if self.detected_stop is False:
-                        stop_distance = sd.detect(img)[0]
+                    #if self.detected_stop is False:
+                    stop_distance, img_stop = sd.detect(img)
+                    orig_img = img_stop
+                    print stop_distance
 
                     # detect vehicle [70:144, 20:156]
-                    is_vehicle = cnn.is_car(img.copy(), self.cnn)
+                    is_vehicle = cnn.is_car(img.copy()[70:144, 20:156], self.cnn)
                     #cv2.rectangle(img, (20, 70), (156, 144), (255, 0, 0))
-                    print "AUFTIC: " + str(is_vehicle)
+                    #print "AUFTIC: " + str(is_vehicle)
 
                     if tl_distance != -1:
                         #self.car_controller.control([0.0, 0.0, 0.0])
@@ -66,13 +69,17 @@ class Camera(object):
                         print "STOP"
                         start_time = time.time()
                         self.detected_stop = True
-                        while time.time() - start_time < 3:
-                            pass#self.car_controller.control([0.0, 0.0, 0.0])
-                        stop_distance = -1
-                        self.detected_stop = True
+                        #while time.time() - start_time < 3:
+                        self.car_controller.control([0.0, 0.0, 0.0])
+                        #stop_distance = -1
                     if is_vehicle:
-                        pass#int "VEHICLE DETECTED!"
-                        #self.car_controller.control([0.0, 0.0, 0.0])
+                        #print "VEHICLE DETECTED!"
+                        self.car_counter += 1
+                    if self.frame_counter % 5 == 0:
+                        if self.car_counter >= 3:
+                            pass#self.car_controller.control([0.0, 0.0, 0.0])
+                        self.car_counter == 0
+
                     # detect lanes
                     img, left_distance, right_distance,  left_line, right_line = fl.detect_lanes(img)
 
@@ -82,11 +89,11 @@ class Camera(object):
                     data = [left_distance, right_distance]
                     output = self.rnn.predict(np.expand_dims(np.array([data]),axis=0))
                     #print output
-                    #self.car_controller.control(output[0][0])
+                    self.car_controller.control(output[0][0])
                     # reset frame_counter
                     self.frame_counter = 0
                     # merge with original image
-                    orig_img[64:, 0:] = img
+                    #orig_img[64:, 0:] = img
 
                 cv2.imshow(hoststr, orig_img)
                 if cv2.waitKey(1) == 27:
