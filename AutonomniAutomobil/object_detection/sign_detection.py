@@ -37,7 +37,7 @@ def detect(img):
         x, y, w, h = cv2.boundingRect(cnt)
         area = cv2.contourArea(cnt)
         # Conditions that have to be satisfied for valid 'STOP' sign
-        if area > 200 and x < mask.shape[1]/2:
+        if area > 300 and area < 400 and x < mask.shape[1]/2:
             # Draw rectangle over 'STOP' sign
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
             # Calculate distance to 'STOP' sign

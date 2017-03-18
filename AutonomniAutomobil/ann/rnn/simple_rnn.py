@@ -18,11 +18,11 @@ trainY = trainY[:30] + trainY[40:]
 # create and fit the RNN network
 def create_model():
     model = Sequential()
-    model.add(SimpleRNN(8, input_dim=2, return_sequences=True))
+    model.add(SimpleRNN(8, input_shape=(None,2), return_sequences=True))
     model.add(Dropout(0.2))
     model.add(SimpleRNN(8,  return_sequences=True))
     model.add(Dropout(0.2))
-    model.add(TimeDistributed(Dense(output_dim=3)))
+    model.add(TimeDistributed(Dense(units=3)))
     model.add(Activation('sigmoid'))
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',
@@ -31,13 +31,13 @@ def create_model():
 
 
 def train_model(model):
-    trainX = reader.read_inputs("training_data")
-    trainY = reader.read_outputs("training_data")
+    trainX = reader.read_inputs("training_data_new")
+    trainY = reader.read_outputs("training_data_new")
 
     #mc = ModelCheckpoint('weights.h5', monitor='precision', save_best_only=True)
     model.fit(np.expand_dims(np.array(trainX), axis=0), np.expand_dims(np.array(trainY), axis=0),
-              batch_size=16, nb_epoch=4000)
-    model.save_weights("weights.h5")
+              batch_size=16, epochs=4000)
+    model.save_weights("weights_new.h5")
     return model
 
 

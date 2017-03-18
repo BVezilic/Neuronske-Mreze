@@ -18,7 +18,7 @@ from util import csv_writer
 
 
 class Camera(object):
-    def __init__(self, host='192.168.0.102:8080'):
+    def __init__(self, host='192.168.137.142:8080'):
         self.host = host
 
     def stream(self):
